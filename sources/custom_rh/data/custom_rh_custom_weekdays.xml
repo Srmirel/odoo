@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="custom_rh_custom_weekdays_lun" model="custom.weekdays">
+        <field name="tag">0</field>
+        <field name="name">Lunes</field>
+    </record>
+    <record id="custom_rh_custom_weekdays_mar" model="custom.weekdays">
+        <field name="tag">1</field>
+        <field name="name">Martes</field>
+    </record>
+    <record id="custom_rh_custom_weekdays_mie" model="custom.weekdays">
+        <field name="tag">2</field>
+        <field name="name">Miércoles</field>
+    </record>
+    <record id="custom_rh_custom_weekdays_jue" model="custom.weekdays">
+        <field name="tag">3</field>
+        <field name="name">Jueves</field>
+    </record>
+    <record id="custom_rh_custom_weekdays_vie" model="custom.weekdays">
+        <field name="tag">4</field>
+        <field name="name">Viernes</field>
+    </record>
+    <record id="custom_rh_custom_weekdays_sab" model="custom.weekdays">
+        <field name="tag">5</field>
+        <field name="name">Sábado</field>
+    </record>
+    <record id="custom_rh_custom_weekdays_dom" model="custom.weekdays">
+        <field name="tag">6</field>
+        <field name="name">Domingo</field>
+    </record>
+</odoo>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="custom_rh_menu" 
+        name="Reporte Especial"
+    parent="hr_attendance.menu_hr_attendance_root" 
+    action="action_report_special"
+    />
+</odoo>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="time_sheet_save_ex_report_special_wizard_view" model="ir.ui.view">
+        <field name="name">time sheet save ex report wizard view</field>
+        <field name="model">save.ex.report.special.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Timesheet Excel Report">
+                        <group>
+                                <field name="document_frame" string="Cambiar Nombre:"/>
+                                <field name="file_name"  readonly="1" filename="document_frame"/>
+
+                        </group>
+                <footer>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

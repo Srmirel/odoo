@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<odoo>
+        <record id="view_report_special_form" model="ir.ui.view">
+            <field name="name">report.special.wizard.form</field>
+            <field name="model">report.special.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Reporte Especial">
+
+                    <group>
+                    <field name="start_date" string="Rango de Fechas" widget="daterange" options="{'end_date_field': 'end_date'}"  />
+
+                    </group>
+                    <footer>
+                        <button string="Generar" class="btn-primary" type="object" name="action_generate_csv" icon="fa-download" />
+
+                        <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="x"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_report_special" model="ir.actions.act_window">
+            <field name="name">Report Special</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">report.special.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_report_special_form"/>
+            <field name="target">new</field>
+
+        </record>
+</odoo>

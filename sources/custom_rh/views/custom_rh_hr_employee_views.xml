@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_employee_form_inherit" model="ir.ui.view">
+        <field name="name">hr.employee.form.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form" />
+        <field name="arch" type="xml">
+            <xpath
+                expr="//page[@name='public']//div[@id='o_work_employee_container']//field[@name='tz']"
+                position="after">
+                <field name="check_in_hour"
+                       options="{'rounding': 0}" on_change="1"
+
+                />
+
+                    <!-- <field name="start_date" widget="daterange" options="{'end_date_field': 'end_date'}" />
+                    <field name="duration" widget="float_time"/> -->
+            </xpath>
+        </field>
+    </record>
+</odoo>
