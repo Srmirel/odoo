@@ -10,5 +10,6 @@ class save_ex_report_wizard(models.TransientModel):
 
     file_name = fields.Binary('Excel Report File')
     document_frame = fields.Char('File To Download')
+    department_id = fields.Many2one("hr.department")
 
     

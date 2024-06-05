@@ -8,7 +8,7 @@
                         <group>
                                 <field name="document_frame" string="Cambiar Nombre:"/>
                                 <field name="file_name"  readonly="1" filename="document_frame"/>
-
+                           
                         </group>
                 <footer>
                     <button string="Cancel" class="btn-secondary" special="cancel"/>
