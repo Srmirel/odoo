@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<menuitem id="delay_rh_menu_root" name="Retardos Especiales" web_icon="delay_rh,static/description/icon.png">
+     <menuitem id="delay_rh_menu" name="Retardos">
+        <menuitem id="delay_rh_property_menu_action" action="delay_rh_property_action"/>
+    </menuitem>
+    
+</menuitem>
+</odoo>

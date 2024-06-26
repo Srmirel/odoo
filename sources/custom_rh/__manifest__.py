@@ -3,7 +3,7 @@
     'version': '1.0',
     'depends': ['base', 'web'],
     'author': "Alvaro Cruz",
-    'category': 'RhEspecial/custom_rh',
+    'category': 'Rh Especial/custom_rh',
     'description': """
     Description text
     """,

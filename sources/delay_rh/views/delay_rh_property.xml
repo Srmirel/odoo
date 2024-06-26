@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<odoo>
+    <!-- Esta configuracion se muestra cuando no tienes datos -->
+    <record id="delay_rh_property_action" model="ir.actions.act_window">
+        <field name="name">Retardos</field>
+        <field name="res_model">delay.rh.property</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crea un retardo personalizado.
+            </p>
+            <p>
+                Crea un retardo personalizado y sigue el progreso.
+            </p>
+        </field>
+    </record>
+
+    <!-- TODO Creacion de Tabla que muestra los registros -->
+    <record id="dalay_rh_property_view_tree" model="ir.ui.view">
+        <field name="name">delay.rh.property.tree</field>
+        <field name="model">delay.rh.property</field>
+        <field name="arch" type="xml">
+            <tree string="Properties">
+                <field name="type_search" />
+                <field name="start_date" string="Fecha de inicio"/>
+                <field name="end_date" string="Fecha de finalización"/>
+                <field name="is_default" optional="hide" string="Por Defecto"/>
+                <!-- <field name="department_id" widget="many2many_tags" string="Departamento/s" optional="hide"/> -->
+                <!-- <field name="employee_id" widget="many2many_tags" string="Empleado/s" optional="hide"/> -->
+            </tree>
+        </field>
+    </record>
+
+    <!-- TODO Creacion de Formulario que muestra los registros -->
+    <record id="delay_rh_property_view_form" model="ir.ui.view">
+        <field name="name">delay.rh.property.form</field>
+        <field name="model">delay.rh.property</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+
+                    <h1>
+                        <div style="display:flex; gap:1rem;">
+                            <p style="display:inline-block;">Tipo de Busqueda </p>
+                            <field name="type_search" string="Tipo de Busqueda" />
+                        </div>
+
+
+                    </h1>
+                    <group>
+
+                        <field name="is_default" string="Por Defecto" />
+
+                    </group>
+                    <group>
+                        <group>
+                            <field name="start_date" string="Rango de Fechas" widget="daterange"
+                                options="{'end_date_field': 'end_date'}" invisible='is_default'/>
+                        </group>
+                        <group>
+                            <field name="workdays_id" widget="many2many_tags" />
+                            <field name="employee_id" widget="many2many_tags" readonly="False"
+                                invisible="type_search not in ['some']" 
+                                required="{'condition': [(type_search, '==', 'some')]}"
+                                string="Empleado/s" />
+                            <field name="department_id" widget="many2many_tags" readonly="False"
+                                invisible="type_search not in ['dep']"
+                                required="{'condition': [(type_search, '==', 'dep')]}"
+                                string="Departamento/s" />
+                        </group>
+                    </group>
+                    <h2>Dias Laborales</h2>
+                    <group>
+
+                        <!-- <label for="monday">Lunes</label> -->
+                        <field name="monday" widget="float_time" invisible="monday_bool" />
+                        <!-- <label for="tuesday">Martes</label> -->
+                        <field name="tuesday" widget="float_time" invisible="tuesday_bool" />
+                        <!-- <label for="wednesday">Miercoles</label> -->
+                        <field name="wednesday" widget="float_time" invisible="wednesday_bool" />
+                        <!-- <label for="thursday">Jueves</label> -->
+                        <field name="thursday" widget="float_time" invisible="thursday_bool" />
+                        <!-- <label for="friday">Viernes</label> -->
+                        <field name="friday" widget="float_time" invisible="friday_bool" />
+                        <!-- <label for="saturday">Sabado</label> -->
+                        <field name="saturday" widget="float_time" invisible="saturday_bool" />
+                        <!-- <label for="sunday">Domingo</label> -->
+                        <field name="sunday" widget="float_time" invisible="sunday_bool" />
+
+
+                        <field name="field_employee" invisible="1" />
+                        <field name="field_department" invisible="1" />
+                        <field name="monday_bool" invisible="1" />
+                        <field name="tuesday_bool" invisible="1" />
+                        <field name="wednesday_bool" invisible="1" />
+                        <field name="thursday_bool" invisible="1" />
+                        <field name="friday_bool" invisible="1" />
+                        <field name="saturday_bool" invisible="1" />
+                        <field name="sunday_bool" invisible="1" />
+
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>
