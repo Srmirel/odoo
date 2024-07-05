@@ -142,7 +142,7 @@ class DelayRhProperty(models.Model):
 
 
 
-        fake_data = request.env["hr.attendance"].search(
+        fake_data = self.env["hr.attendance"].search(
         [
             '&',
             '&',
