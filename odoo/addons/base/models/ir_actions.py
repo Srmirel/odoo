@@ -15,6 +15,7 @@ import logging
 from operator import getitem
 import requests
 import json
+import contextlib
 
 from pytz import timezone
 
@@ -661,8 +662,6 @@ class IrActionsServer(models.Model):
                     raise ValidationError(_("The path to the field to update contains a non-relational field (%s) that is not the last field in the path. You can't traverse non-relational fields (even in the quantum realm). Make sure only the last field in the path is non-relational.", field_name))
                 if isinstance(field, fields.Json):
                     raise ValidationError(_("I'm sorry to say that JSON fields (such as %s) are currently not supported.", field_name))
-                elif field.readonly:
-                    raise ValidationError(_("The field to update (%s) is read-only. You can't update a read-only field - even when asking nicely.", field_name))
         target_records = None
         if record is not None:
             target_records = reduce(getitem, path[:-1], record)
@@ -679,7 +678,11 @@ class IrActionsServer(models.Model):
             return ''
         model = self.env[self.model_id.model]
         pretty_path = []
+        field = None
         for field_name in path.split('.'):
+            if field and field.type == 'properties':
+                pretty_path.append(field_name)
+                continue
             field = model._fields[field_name]
             field_id = self.env['ir.model.fields']._get(model._name, field_name)
             if field.relational:
@@ -833,16 +836,14 @@ class IrActionsServer(models.Model):
 
         If applicable, link active_id.<self.link_field_id> to the new record.
         """
-        res = {'name': self.value}
-
-        res = self.env[self.crud_model_id.model].create(res)
+        res_id, _res_name = self.env[self.crud_model_id.model].name_create(self.value)
 
         if self.link_field_id:
             record = self.env[self.model_id.model].browse(self._context.get('active_id'))
             if self.link_field_id.ttype in ['one2many', 'many2many']:
-                record.write({self.link_field_id.name: [Command.link(res.id)]})
+                record.write({self.link_field_id.name: [Command.link(res_id)]})
             else:
-                record.write({self.link_field_id.name: res.id})
+                record.write({self.link_field_id.name: res_id})
 
     def _get_eval_context(self, action=None):
         """ Prepare the context used when evaluating python code, like the
@@ -979,8 +980,7 @@ class IrActionsServer(models.Model):
 
     @api.constrains('update_field_id', 'evaluation_type')
     def _raise_many2many_error(self):
-        if self.filtered(lambda line: line.update_field_id.ttype == 'many2many' and line.evaluation_type == 'reference'):
-            raise ValidationError(_('many2many fields cannot be evaluated by reference'))
+        pass  # TODO: remove in master
 
     @api.onchange('resource_ref')
     def _set_resource_ref(self):
@@ -1017,8 +1017,17 @@ class IrActionsServer(models.Model):
                     expr = int(action.value)
                 except Exception:
                     pass
+            elif action.update_field_id.ttype == 'float':
+                with contextlib.suppress(Exception):
+                    expr = float(action.value)
             result[action.id] = expr
         return result
+
+    def copy_data(self, default=None):
+        default = default or {}
+        if not default.get('name'):
+            default['name'] = _('%s (copy)', self.name)
+        return super().copy_data(default=default)
 
 class IrActionsTodo(models.Model):
     """

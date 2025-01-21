@@ -82,12 +82,15 @@ msgstr "Hmmm..."
 #, python-format
 msgid ""
 "I am a simple bot, but if that's a dog, he is the cutest 😊 "
-"<br/>Congratulations, you finished this tour. You can now <b>close this chat"
-" window</b>. Enjoy discovering Odoo."
+"<br/>Congratulations, you finished this tour. You can now <b>close this "
+"conversation</b> or start the tour again with typing <span "
+"class=\"o_odoobot_command\">start the tour</span>. Enjoy discovering Odoo!"
 msgstr ""
-"Solo soy un simple bot, pero si eso es un perro, es lo más bonito que he "
-"visto 😊 <br/>Enhorabuena, ha terminado este recorrido. Ya puede <b>cerrar "
-"esta ventana de chat</b>. Disfrute descubriendo Odoo."
+"Soy un simple bot, pero si eso es un perro, es el más adorable 😊 "
+"<br/>Enhorabuena, esto es el final de de este tour</b>. Ahora puede "
+"<b>cerrar esta conversación</b> o comenzar el recorrido otra vez tecleando "
+"<span class=\"o_odoobot_command\">comenzar el recorrido</span>. ¡Disfrute "
+"descubriendo Odoo!"
 
 #. module: mail_bot
 #. odoo-python
@@ -105,7 +108,7 @@ msgid ""
 "<span class=\"o_odoobot_command\">start the tour</span>."
 msgstr ""
 "No soy lo suficientemente inteligente para contestar su pregunta.<br/>Para "
-"seguir mi guía, diga: <span class=\"o_odoobot_command\">iniciar el "
+"seguir mi guía, diga: <span class=\"o_odoobot_command\">comenzar el "
 "recorrido</span>."
 
 #. module: mail_bot
@@ -199,7 +202,7 @@ msgid ""
 msgstr ""
 "Disculpe, tengo sueño. ¡O no! Tal vez solo estoy tratando de ocultar mi "
 "ignorancia del lenguaje humano...<br/>Puedo mostrarle las funciones si "
-"escribe: <span class=\"o_odoobot_command\">iniciar el recorrido</span>."
+"escribe: <span class=\"o_odoobot_command\">comenzar el recorrido</span>."
 
 #. module: mail_bot
 #. odoo-python
@@ -229,7 +232,7 @@ msgid ""
 "aria-hidden=\"true\"></i> icon and select a file."
 msgstr ""
 "Para <b>enviar un archivo adjunto</b>, haga clic en el icono <i class=\"fa "
-"fa-paperclip\" aria-hidden=\"verdadero\"></i> y seleccione un archivo"
+"fa-paperclip\" aria-hidden=\"True\"></i> y seleccione un archivo"
 
 #. module: mail_bot
 #. odoo-python
@@ -325,4 +328,4 @@ msgstr "amor"
 #: code:addons/mail_bot/models/mail_bot.py:0
 #, python-format
 msgid "start the tour"
-msgstr "iniciar el recorrido"
+msgstr "comenzar el recorrido"

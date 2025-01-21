@@ -36,14 +36,14 @@ class SaleOrderLine(models.Model):
             if order_line.qty_delivered_method == 'stock_move':
                 boms = order_line.move_ids.filtered(lambda m: m.state != 'cancel').mapped('bom_line_id.bom_id')
                 dropship = any(m._is_dropshipped() for m in order_line.move_ids)
-                if not boms and dropship:
-                    boms = boms._bom_find(order_line.product_id, company_id=order_line.company_id.id, bom_type='phantom')[order_line.product_id]
                 # We fetch the BoMs of type kits linked to the order_line,
                 # the we keep only the one related to the finished produst.
                 # This bom should be the only one since bom_line_id was written on the moves
                 relevant_bom = boms.filtered(lambda b: b.type == 'phantom' and
                         (b.product_id == order_line.product_id or
                         (b.product_tmpl_id == order_line.product_id.product_tmpl_id and not b.product_id)))
+                if not relevant_bom:
+                    relevant_bom = boms._bom_find(order_line.product_id, company_id=order_line.company_id.id, bom_type='phantom')[order_line.product_id]
                 if relevant_bom:
                     # not written on a move coming from a PO: all moves (to customer) must be done
                     # and the returns must be delivered back to the customer
@@ -130,7 +130,7 @@ class SaleOrderLine(models.Model):
         # Specific case when we change the qty on a SO for a kit product.
         # We don't try to be too smart and keep a simple approach: we use the quantity of entire
         # kits that are currently in delivery
-        bom = self.env['mrp.bom']._bom_find(self.product_id, bom_type='phantom')[self.product_id]
+        bom = self.env['mrp.bom'].sudo()._bom_find(self.product_id, bom_type='phantom', company_id=self.company_id.id)[self.product_id]
         if bom:
             moves = self.move_ids.filtered(lambda r: r.state != 'cancel' and not r.scrapped)
             filters = self._get_incoming_outgoing_moves_filter()

@@ -6,6 +6,7 @@ import re
 from operator import itemgetter
 
 from odoo import api, Command, fields, models, modules, _
+from odoo.addons.bus.websocket import WebsocketConnectionHandler
 
 
 class ImLivechatChannel(models.Model):
@@ -91,8 +92,8 @@ class ImLivechatChannel(models.Model):
     @api.depends('channel_ids')
     def _compute_nbr_channel(self):
         data = self.env['discuss.channel']._read_group([
-            ('livechat_channel_id', 'in', self._ids),
-            ('has_message', '=', True)], ['livechat_channel_id'], ['__count'])
+            ('livechat_channel_id', 'in', self.ids),
+        ], ['livechat_channel_id'], ['__count'])
         channel_count = {livechat_channel.id: count for livechat_channel, count in data}
         for record in self:
             record.nbr_channel = channel_count.get(record.id, 0)
@@ -317,6 +318,7 @@ class ImLivechatChannel(models.Model):
         info['server_url'] = self.get_base_url()
         if info['available']:
             info['options'] = self._get_channel_infos()
+            info["options"]["websocket_worker_version"] = WebsocketConnectionHandler._VERSION
             info['options']['current_partner_id'] = (
                 self.env.user.partner_id.id if not self.env.user._is_public() else None
             )

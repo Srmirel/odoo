@@ -2,6 +2,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import base64
+import json
 
 from werkzeug.urls import url_encode
 
@@ -181,6 +182,18 @@ class TestUiTranslate(odoo.tests.HttpCase):
 
         self.assertNotEqual(new_menu.name, 'value pa-GB', msg="The new menu should not have its value edited, only its translation")
         self.assertEqual(new_menu.with_context(lang=parseltongue.code).name, 'value pa-GB', msg="The new translation should be set")
+
+    def test_translate_text_options(self):
+        lang_en = self.env.ref('base.lang_en')
+        lang_fr = self.env.ref('base.lang_fr')
+        self.env['res.lang']._activate_lang(lang_fr.code)
+        default_website = self.env.ref('website.default_website')
+        default_website.write({
+            'default_lang_id': lang_en.id,
+            'language_ids': [(6, 0, (lang_en + lang_fr).ids)],
+        })
+
+        self.start_tour(self.env['website'].get_client_action_url('/'), 'translate_text_options', login='admin')
 
     def test_snippet_translation(self):
         ResLang = self.env['res.lang']
@@ -434,12 +447,11 @@ class TestUi(odoo.tests.HttpCase):
 
     def test_24_snippet_cache_across_websites(self):
         default_website = self.env.ref('website.default_website')
-        if self.env['website'].search_count([]) == 1:
-            self.env['website'].create({
-                'name': 'My Website 2',
-                'domain': '',
-                'sequence': 20,
-            })
+        website = self.env['website'].create({
+            'name': 'Test Website',
+            'domain': '',
+            'sequence': 20
+        })
         self.env['ir.ui.view'].with_context(website_id=default_website.id).save_snippet(
             name='custom_snippet_test',
             arch="""
@@ -450,7 +462,9 @@ class TestUi(odoo.tests.HttpCase):
             thumbnail_url='/website/static/src/img/snippets_thumbs/s_text_block.svg',
             snippet_key='s_text_block',
             template_key='website.snippets')
-        self.start_tour('/@/', 'snippet_cache_across_websites', login='admin')
+        self.start_tour('/@/', 'snippet_cache_across_websites', login='admin', cookies={
+            'websiteIdMapping': json.dumps({'Test Website': website.id})
+        })
 
     def test_25_website_edit_discard(self):
         self.start_tour('/web', 'homepage_edit_discard', login='admin')
@@ -482,8 +496,14 @@ class TestUi(odoo.tests.HttpCase):
     def test_31_website_edit_megamenu_big_icons_subtitles(self):
         self.start_tour(self.env['website'].get_client_action_url('/'), 'edit_megamenu_big_icons_subtitles', login='admin')
 
+    def test_32_website_background_colorpicker(self):
+        self.start_tour(self.env['website'].get_client_action_url("/"), "website_background_colorpicker", login="admin")
+
     def test_website_media_dialog_image_shape(self):
         self.start_tour("/", 'website_media_dialog_image_shape', login='admin')
+
+    def test_website_media_dialog_insert_media(self):
+        self.start_tour("/", "website_media_dialog_insert_media", login="admin")
 
     def test_website_text_font_size(self):
         self.start_tour('/@/', 'website_text_font_size', login='admin', timeout=300)
@@ -584,3 +604,53 @@ class TestUi(odoo.tests.HttpCase):
 
     def test_mobile_order_with_drag_and_drop(self):
         self.start_tour(self.env['website'].get_client_action_url('/'), 'website_mobile_order_with_drag_and_drop', login='admin')
+
+    def test_website_no_dirty_lazy_image(self):
+        website = self.env['website'].browse(1)
+        # Enable multiple langs to reduce the chance of the test being silently
+        # broken by ensuring that it receives a lot of extra o_dirty elements.
+        # This is done to account for potential later changes in the number of
+        # o_dirty elements caused by legitimate modifications in the code.
+        # Perfs: `_activate_lang()` does not load .pot so it is perf friendly
+        lang_fr = self.env['res.lang']._activate_lang('fr_FR')
+        lang_es = self.env['res.lang']._activate_lang('es_AR')
+        lang_zh = self.env['res.lang']._activate_lang('zh_HK')
+        lang_ar = self.env['res.lang']._activate_lang('ar_SY')
+        website.language_ids = self.env.ref('base.lang_en') + lang_fr + lang_es + lang_zh + lang_ar
+        # Select "dropdown with image" language selector template
+        for key, active in [
+            # footer
+            ('portal.footer_language_selector', True),
+            ('website.footer_language_selector_inline', False),
+            ('website.footer_language_selector_flag', True),
+            ('website.footer_language_selector_no_text', False),
+            ('website.footer_language_selector_flag', True),
+            ('website.footer_language_selector_no_text', False),
+            # header
+            ('website.header_language_selector', True),
+            ('website.header_language_selector_inline', False),
+            ('website.header_language_selector_flag', True),
+            ('website.header_language_selector_no_text', False),
+            ('website.header_language_selector_flag', True),
+            ('website.header_language_selector_no_text', False),
+        ]:
+            self.env['website'].with_context(website_id=website.id).viewref(key).active = active
+
+        self.start_tour('/', 'website_no_dirty_lazy_image', login='admin')
+
+    def test_website_edit_menus_delete_parent(self):
+        website = self.env['website'].browse(1)
+        menu_tree = self.env['website.menu'].get_tree(website.id)
+
+        parent_menu = menu_tree['children'][0]['fields']
+        child_menu = menu_tree['children'][1]['fields']
+        child_menu['parent_id'] = parent_menu['id']
+
+        self.env['website.menu'].save(website.id, {'data': [parent_menu, child_menu]})
+        self.start_tour(self.env['website'].get_client_action_url('/'), 'edit_menus_delete_parent', login='admin')
+
+    def test_snippet_carousel(self):
+        self.start_tour('/', 'snippet_carousel', login='admin')
+
+    def test_media_iframe_video(self):
+        self.start_tour("/", "website_media_iframe_video", login="admin")

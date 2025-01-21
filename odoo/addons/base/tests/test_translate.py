@@ -315,6 +315,12 @@ class TranslationToolsTestCase(BaseCase):
         result = html_translate(lambda term: term, source)
         self.assertEqual(result, source)
 
+    def test_translate_html_nbsp(self):
+        """ Test html_translate(). """
+        source = """<blockquote>A&nbsp;<h2>B&#160</h2>\xa0C</blockquote>"""
+        result = html_translate(lambda term: term, source)
+        self.assertEqual(result, '<blockquote>A&nbsp;<h2>B&nbsp;</h2>&nbsp;C</blockquote>')
+
     def test_translate_html_i(self):
         """ Test xml_translate() and html_translate() with <i> elements. """
         source = """<p>A <i class="fa-check"></i> B</p>"""
@@ -1031,6 +1037,20 @@ class TestXMLTranslation(TransactionCase):
         self.assertEqual(view.with_env(env_nolang).arch_db, archf % terms_fr)
         self.assertEqual(view.with_env(env_fr).arch_db, archf % terms_fr)
         self.assertEqual(view.with_env(env_nl).arch_db, archf % terms_nl)
+
+    def test_sync_xml_attribute(self):
+        """ check translations with attribute can be cleaned up after write """
+        self.env['res.lang']._activate_lang('fr_FR')
+        archf = '<form><i title="%s"/></form>'
+        terms_en = ('Fork',)
+        terms_fr = ('Fourchetta',)
+        view = self.create_view(archf, terms_en, en_US=terms_en, fr_FR=terms_fr)
+
+        terms_en = ('Cheese',)
+        view.write({'arch_db': archf % terms_en})
+
+        self.assertEqual(view.arch_db, archf % terms_en)
+        self.assertEqual(view.with_context(lang='fr_FR').arch_db, archf % terms_en)
 
     def test_sync_text_to_xml(self):
         """ Check translations of 'arch' after xml tags changes in source terms. """
